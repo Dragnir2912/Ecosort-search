@@ -4,18 +4,33 @@ Ce document définit comment l'équipe de 3 travaille sur le dépôt pour respec
 
 ---
 
-## 1. Répartition des rôles et des 3 branches
+## 1. Répartition des rôles et des branches
 
-Le projet a une séparation naturelle en 3 blocs de travail (Jalon 1 + les deux volets du Jalon 2). Chaque étudiant possède **une branche longue durée** dont il est responsable, plus des branches courtes pour ses tâches.
+Le projet a une séparation naturelle en 3 blocs de travail (Jalon 1 + les deux volets du Jalon 2), un par étudiant.
 
-| Rôle | Branche longue durée | Responsabilité |
+| Rôle | Scope de commit | Responsabilité |
 | :--- | :--- | :--- |
-| **ML Engineer** | `ml-model` | Dataset Kaggle, prétraitement, CNN/Transfer Learning, export `modele_eco_sort.h5` |
+| **ML Engineer** | `ml` | Dataset Kaggle, prétraitement, CNN/Transfer Learning, export `modele_eco_sort.keras` |
 | **Scraping Engineer** | `scraping` | Scraper Jumia (requête, extraction 3-5 résultats), robustesse (timeouts, erreurs) |
-| **Web/DevOps Engineer** | `webapp-docker` | Interface Streamlit/Flask, intégration modèle + scraper, `Dockerfile` / `docker-compose.yml` |
+| **Web/DevOps Engineer** | `webapp`, `docker` | Interface Streamlit/Flask, intégration modèle + scraper, `Dockerfile` / `docker-compose.yml` |
 
-Ces 3 branches restent à jour avec `main` (rebase ou merge régulier) mais **ne sont jamais poussées directement sur `main`**. Chaque étudiant part de sa branche pour créer des sous-branches de tâche :
+**Pas de branche longue durée par personne.** On a testé l'idée au démarrage (une branche `ml-model`/`scraping`/`webapp-docker` par étudiant, dont on partirait pour créer des sous-branches), mais à l'usage elle n'apportait rien : toutes les Pull Requests partent directement vers `main` (voir section 2, GitHub Flow), donc une branche intermédiaire ne reçoit jamais aucun merge et reste juste une coquille vide. On l'a abandonnée pour éviter la confusion (renommer/supprimer une branche de rôle a d'ailleurs fermé une PR par erreur).
 
+Chaque étudiant part donc **directement de `main` à jour** pour chaque tâche :
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/ml-training-cnn
+```
+
+Si une tâche dépend d'une autre PR pas encore mergée, on part de cette branche non mergée plutôt que de `main` (voir section 2), pour ne pas dupliquer du travail en attente de revue.
+
+Convention de nommage : `type/scope-description`, en minuscules, tirets.
+Types : `feature/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`.
+Le `scope` dans le nom de la branche identifie le domaine (`ml`, `scraping`, `webapp`, `docker`), pas une branche de rôle à part.
+
+Exemples :
 ```
 feature/ml-preprocessing
 feature/ml-training-cnn
@@ -24,9 +39,6 @@ feature/webapp-streamlit-ui
 feature/docker-compose
 ```
 
-Convention de nommage : `type/scope-description`, en minuscules, tirets.
-Types : `feature/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`.
-
 ---
 
 ## 2. Workflow : GitHub Flow (pas de Git Flow)
@@ -34,7 +46,7 @@ Types : `feature/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`.
 Pour une équipe de 3 sur 3 semaines, le **Git Flow** classique (develop/release/hotfix) est trop lourd. On utilise le **GitHub Flow**, standard dans la plupart des équipes produit :
 
 1. `main` = toujours stable et déployable (c'est ce que le prof clone).
-2. Toute tâche part d'une branche courte créée depuis sa branche de rôle ou depuis `main`.
+2. Toute tâche part d'une branche courte créée depuis `main` à jour (ou depuis une autre branche de tâche si dépendance non mergée, voir section 1).
 3. Commits atomiques et fréquents pendant le travail.
 4. Dès qu'une fonctionnalité est prête (même partielle) : **Pull Request** vers `main`.
 5. Revue obligatoire par **au moins un autre membre** (jamais l'auteur qui s'auto-approuve).
@@ -110,7 +122,7 @@ Lien avec le jalon / l'issue
 ```
 ecosort-search/
 ├── data/                    # dataset Kaggle brut (GITIGNORÉ, jamais poussé)
-├── models/                  # modele_eco_sort.h5 (voir note Git LFS ci-dessous)
+├── models/                  # modele_eco_sort.keras (voir note Git LFS ci-dessous)
 ├── notebooks/                # exploration, entraînement, évaluation
 ├── src/
 │   ├── ml/                   # prétraitement, training, inference
@@ -125,7 +137,7 @@ ecosort-search/
 └── CONTRIBUTING.md            # ce fichier
 ```
 
-**Note sur `models/modele_eco_sort.h5`** : s'il dépasse quelques dizaines de Mo, ne pas le committer brut sur GitHub (limite 100 Mo, et alourdit le repo). Options : Git LFS, ou script `download_model.sh` qui télécharge depuis un lien (Drive, Hugging Face, release GitHub).
+**Note sur `models/modele_eco_sort.keras`** : s'il dépasse quelques dizaines de Mo, ne pas le committer brut sur GitHub (limite 100 Mo, et alourdit le repo). Options : Git LFS, ou script `download_model.sh` qui télécharge depuis un lien (Drive, Hugging Face, release GitHub).
 
 ---
 
@@ -143,6 +155,7 @@ data/
 *.zip
 
 # Modèle si volumineux
+models/*.keras
 models/*.h5
 
 # Divers
@@ -178,8 +191,8 @@ Vu le barème de bonus (0,5 pt/jour d'avance, max 5 pts), viser une soumission l
 ## 9. Répartition de la charge (contribution individuelle notée)
 
 Puisque chacun est noté individuellement (point 5 des consignes), chacun doit :
-- committer sur sa propre branche de rôle régulièrement (pas de gros commit unique en fin de projet),
+- committer régulièrement sur ses propres branches de tâche (pas de gros commit unique en fin de projet),
 - ouvrir ses propres PR plutôt que de laisser un seul membre tout merger,
 - relire au moins autant de PR qu'il en ouvre.
 
-Un rapide point d'équipe (15 min, 2-3 fois/semaine) suffit pour synchroniser les 3 branches et éviter les conflits de merge tardifs.
+Un rapide point d'équipe (15 min, 2-3 fois/semaine) suffit pour se répartir les tâches et éviter les conflits de merge tardifs.
