@@ -4,7 +4,6 @@ __pycache__/
 *.pyc
 data/
 *.zip
-models/*.h5
 .env
 .DS_Store
 .ipynb_checkpoints/
