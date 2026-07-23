@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">EcoSort-Search</title>
+  <defs>
+    <linearGradient id="bg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#12151a"/>
+      <stop offset="1" stop-color="#050807"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="19" y1="16" x2="46" y2="51" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#65f2bd"/>
+      <stop offset="1" stop-color="#16bd7f"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#bg)"/>
+  <rect x="2.75" y="2.75" width="58.5" height="58.5" rx="14.25" fill="none" stroke="#ffffff" stroke-opacity=".12" stroke-width="1.5"/>
+  <path d="M19 23h26l-2.7 27.2a4 4 0 0 1-4 3.6H25.7a4 4 0 0 1-4-3.6L19 23Z" fill="url(#accent)" fill-opacity=".16" stroke="url(#accent)" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M16 23h32M26 17h12" fill="none" stroke="#eafdf5" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M32.1 43.5c-5.6-1-8.3-5.6-7.1-11.2 5.5-.7 9.7 1.5 10.6 6.6 2.1-3 4.9-4.5 8.3-4.3.3 5-3 8.8-8 9-1.5.1-2.7 0-3.8-.1Z" fill="url(#accent)"/>
+  <path d="M27.1 34.4c3.7 1.5 6.1 4.4 7.4 8.6" fill="none" stroke="#062d20" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

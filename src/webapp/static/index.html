@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoSort-Search</title>
+<meta name="theme-color" content="#07060a">
+<link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="bg-fx" aria-hidden="true">
+  <div class="glow glow-green"></div>
+  <div class="glow glow-blue"></div>
+  <div class="glow glow-yellow"></div>
+  <div class="ambient-warm"></div>
+  <div class="vignette"></div>
+  <div class="grain"></div>
+</div>
+
+<nav class="navbar">
+  <div class="brand">
+    <span class="brand-mark">EcoSort</span><span class="brand-suffix">-Search</span>
+  </div>
+  <div class="nav-links">
+    <a href="#categories" data-i18n="nav.guides">Consignes de tri</a>
+    <a href="#pipeline" data-i18n="nav.how">Comment ça marche</a>
+  </div>
+  <div class="nav-actions">
+    <div class="language-picker" id="language-picker">
+      <button type="button" class="language-toggle" id="language-toggle" aria-haspopup="menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.3 2.4 3.5 5.4 3.5 9S14.3 18.6 12 21c-2.3-2.4-3.5-5.4-3.5-9S9.7 5.4 12 3z"/></svg>
+        <span data-i18n="nav.language">Langue</span>
+        <strong id="language-current">FR</strong>
+        <svg class="language-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
+      </button>
+      <div class="language-menu hidden" id="language-menu" role="menu">
+        <button type="button" role="menuitemradio" data-language="fr">
+          <span><strong>FR</strong><span data-i18n="nav.french">Français</span></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        </button>
+        <button type="button" role="menuitemradio" data-language="en">
+          <span><strong>EN</strong><span data-i18n="nav.english">English</span></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="status-pill">
+      <span class="dot"></span> <span data-i18n="nav.ready">IA prête</span>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <p class="eyebrow" data-i18n="hero.eyebrow">Tri sélectif assisté par intelligence artificielle</p>
+  <h1 data-i18n-html="hero.title">Trouvez le produit.<br>Laissez l'IA trier.</h1>
+  <p class="tagline" data-i18n="hero.tagline">Recherchez un article, l'IA analyse son emballage et vous indique instantanément la bonne poubelle.</p>
+
+  <form id="search-form" class="search-bar command-center">
+    <svg class="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="search-input" type="text" placeholder="Entrez le nom d'un produit (ex : bouteille Coca-Cola)" data-i18n-placeholder="hero.placeholder" autocomplete="off" required>
+    <button type="submit" class="magnetic" data-i18n="hero.search">Rechercher</button>
+  </form>
+</header>
+
+<section class="waste-showroom" id="waste-showroom" data-mode="overview">
+  <div class="showroom-ambient" id="showroom-ambient" aria-hidden="true"></div>
+  <div class="showroom-stage" id="showroom-stage" aria-hidden="true"></div>
+
+  <button type="button" class="magnetic back-btn hidden" id="category-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    <span data-i18n="showroom.back">Retour</span>
+  </button>
+
+  <div class="showroom-ui showroom-ui-overview" id="ui-overview">
+    <p class="eyebrow" data-i18n="showroom.choose">Choisissez une poubelle</p>
+    <h2 id="showroom-title">Poubelle JAUNE</h2>
+    <p id="showroom-desc">Tous les emballages ménagers légers : plastique, métal et carton.</p>
+
+    <button type="button" class="showroom-arrow prev" id="showroom-prev" aria-label="Poubelle précédente" data-i18n-aria-label="showroom.previous">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="showroom-arrow next" id="showroom-next" aria-label="Poubelle suivante" data-i18n-aria-label="showroom.next">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+
+    <div class="showroom-dots" id="showroom-dots" role="tablist" aria-label="Choisir une catégorie de tri" data-i18n-aria-label="showroom.dots"></div>
+    <p class="showroom-hint" data-i18n="showroom.hint">Cliquez sur la poubelle active pour la découvrir - glissez ou utilisez les flèches pour changer</p>
+  </div>
+
+  <div class="showroom-ui showroom-ui-category hidden" id="ui-category">
+    <span class="category-chip" id="category-chip"></span>
+    <h2 id="category-page-title"></h2>
+    <p id="category-page-def"></p>
+
+    <div class="category-columns">
+      <div class="category-col category-col-accepted">
+        <h3 data-i18n="category.accepted">À déposer</h3>
+        <ul id="category-accepted"></ul>
+      </div>
+      <div class="category-col category-col-refused">
+        <h3 data-i18n="category.refused">À éviter</h3>
+        <ul id="category-refused"></ul>
+      </div>
+    </div>
+
+    <div class="category-tips">
+      <h3 data-i18n="category.tips">Les bons gestes</h3>
+      <ul id="category-tips-list"></ul>
+    </div>
+
+    <div class="category-page-nav">
+      <button type="button" class="magnetic ghost-btn" id="category-prev" data-i18n="category.previous">Précédente</button>
+      <button type="button" class="magnetic ghost-btn" id="category-next" data-i18n="category.next">Suivante</button>
+    </div>
+  </div>
+</section>
+
+<section id="results" class="results hidden">
+  <h2><span data-i18n="results.for">Résultats pour</span> <span id="query-label"></span></h2>
+  <div id="results-grid" class="grid"></div>
+  <p id="results-empty" class="empty hidden" data-i18n="results.empty">Aucun produit trouvé. Essayez un autre mot-clé.</p>
+</section>
+
+<section id="categories" class="categories">
+  <div class="section-head reveal">
+    <p class="eyebrow" data-i18n="categories.eyebrow">Guide essentiel</p>
+    <h2 data-i18n="categories.title">Les 5 consignes de tri</h2>
+    <p class="section-sub" data-i18n="categories.sub">Chaque produit est classé dans l'une de ces 5 catégories strictes.</p>
+  </div>
+
+  <div class="categories-grid" id="categories-grid">
+    <article class="category-card reveal" data-category="jaune" data-color="#FFD400" style="--c:#FFD400;">
+      <div class="category-media">
+        <img class="category-photo" src="/static/img/waste/poubelle_jaune.png" alt="bouteille en plastique jaune" loading="lazy"
+             onerror="this.closest('.category-card').classList.add('img-missing')">
+      <div class="category-icon-fallback" style="--c:#FFD400;">
+        <svg viewBox="0 0 64 64" fill="none"><path d="M26 4h12v8l4 6v38a4 4 0 0 1-4 4H26a4 4 0 0 1-4-4V18l4-6V4z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+        <div class="category-floor" aria-hidden="true"></div>
+      </div>
+      <div class="category-body">
+        <span class="category-swatch" style="--c:#FFD400;"></span>
+        <h3 class="category-title">Poubelle JAUNE</h3>
+        <p class="category-desc">Emballages ménagers légers : bouteilles, canettes, boîtes de conserve, briques, flacons, cartons.</p>
+        <p class="category-materials">plastique · métal · carton</p>
+      </div>
+    </article>
+
+    <article class="category-card reveal" data-category="verte" data-color="#00E676" style="--c:#00E676;">
+      <div class="category-media">
+        <img class="category-photo" src="/static/img/waste/poubelle_verte.png" alt="bocal en verre" loading="lazy"
+             onerror="this.closest('.category-card').classList.add('img-missing')">
+      <div class="category-icon-fallback" style="--c:#00E676;">
+        <svg viewBox="0 0 64 64" fill="none"><path d="M22 12h20v6l-4 4v32a4 4 0 0 1-4 4H26a4 4 0 0 1-4-4V22l-4-4v-6h4z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+        <div class="category-floor" aria-hidden="true"></div>
+      </div>
+      <div class="category-body">
+        <span class="category-swatch" style="--c:#00E676;"></span>
+        <h3 class="category-title">Poubelle VERTE</h3>
+        <p class="category-desc">Uniquement le verre d'emballage : bouteilles de jus/vin, pots de confiture, bocaux. Vaisselle cassée interdite.</p>
+        <p class="category-materials">verre</p>
+      </div>
+    </article>
+
+    <article class="category-card reveal" data-category="bleue" data-color="#00AEEF" style="--c:#00AEEF;">
+      <div class="category-media">
+        <img class="category-photo" src="/static/img/waste/poubelle_bleue.png" alt="liasse de papier" loading="lazy"
+             onerror="this.closest('.category-card').classList.add('img-missing')">
+      <div class="category-icon-fallback" style="--c:#00AEEF;">
+        <svg viewBox="0 0 64 64" fill="none"><rect x="10" y="10" width="44" height="44" rx="4" stroke="currentColor" stroke-width="2.5"/><line x1="18" y1="24" x2="46" y2="24" stroke="currentColor" stroke-width="2.5"/><line x1="18" y1="34" x2="46" y2="34" stroke="currentColor" stroke-width="2.5"/><line x1="18" y1="44" x2="38" y2="44" stroke="currentColor" stroke-width="2.5"/></svg>
+      </div>
+        <div class="category-floor" aria-hidden="true"></div>
+      </div>
+      <div class="category-body">
+        <span class="category-swatch" style="--c:#00AEEF;"></span>
+        <h3 class="category-title">Poubelle BLEUE</h3>
+        <p class="category-desc">Papiers graphiques propres : prospectus, journaux, magazines, cahiers, livres, enveloppes.</p>
+        <p class="category-materials">papier</p>
+      </div>
+    </article>
+
+    <article class="category-card reveal" data-category="d3e" data-color="#00F0FF" style="--c:#00F0FF;">
+      <div class="category-media">
+        <img class="category-photo" src="/static/img/waste/poubelle_grise.png" alt="smartphone" loading="lazy"
+             onerror="this.closest('.category-card').classList.add('img-missing')">
+      <div class="category-icon-fallback" style="--c:#00F0FF;">
+        <svg viewBox="0 0 64 64" fill="none"><rect x="18" y="6" width="28" height="52" rx="5" stroke="currentColor" stroke-width="2.5"/><line x1="26" y1="50" x2="38" y2="50" stroke="currentColor" stroke-width="2.5"/></svg>
+      </div>
+        <div class="category-floor" aria-hidden="true"></div>
+      </div>
+      <div class="category-body">
+        <span class="category-swatch" style="--c:#00F0FF;"></span>
+        <h3 class="category-title">Bac Électronique (D3E)</h3>
+        <p class="category-desc">Tout produit à piles, batterie ou prise : smartphones, écouteurs, chargeurs, mixeurs, montres.</p>
+        <p class="category-materials">équipements électriques et électroniques</p>
+      </div>
+    </article>
+
+    <article class="category-card reveal" data-category="marron" data-color="#D97757" style="--c:#D97757;">
+      <div class="category-media">
+        <img class="category-photo" src="/static/img/waste/poubelle_marron.png" alt="sac poubelle" loading="lazy"
+             onerror="this.closest('.category-card').classList.add('img-missing')">
+      <div class="category-icon-fallback" style="--c:#D97757;">
+        <svg viewBox="0 0 64 64" fill="none"><path d="M14 20h36l-3 36a4 4 0 0 1-4 4H21a4 4 0 0 1-4-4L14 20z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+        <div class="category-floor" aria-hidden="true"></div>
+      </div>
+      <div class="category-body">
+        <span class="category-swatch" style="--c:#D97757;"></span>
+        <h3 class="category-title">Poubelle MARRON / NOIRE</h3>
+        <p class="category-desc">Déchets résiduels : restes alimentaires, emballages souples, produits d'hygiène, objets multicouches.</p>
+        <p class="category-materials">déchets résiduels</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="pipeline" class="pipeline">
+  <div class="section-head reveal">
+    <p class="eyebrow" data-i18n="pipeline.eyebrow">Une réponse en quelques secondes</p>
+    <h2 data-i18n="pipeline.title">Comment ça marche</h2>
+  </div>
+
+  <div class="pipeline-track">
+    <div class="pipeline-progress"><div class="pipeline-progress-fill"></div></div>
+
+    <div class="pipeline-step reveal">
+      <div class="pipeline-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <h3 data-i18n="pipeline.step1.title">1. Trouvez votre produit</h3>
+      <p data-i18n="pipeline.step1.desc">Saisissez son nom pour afficher rapidement les choix les plus pertinents.</p>
+    </div>
+
+    <div class="pipeline-step reveal">
+      <div class="pipeline-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+      </div>
+      <h3 data-i18n="pipeline.step2.title">2. L’IA l’analyse</h3>
+      <p data-i18n="pipeline.step2.desc">EcoSort identifie sa matière et sa catégorie grâce au nom et à l’image du produit.</p>
+    </div>
+
+    <div class="pipeline-step reveal">
+      <div class="pipeline-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h3 data-i18n="pipeline.step3.title">3. Triez au bon endroit</h3>
+      <p data-i18n="pipeline.step3.desc">La bonne poubelle apparaît immédiatement avec une consigne claire et facile à retenir.</p>
+    </div>
+  </div>
+</section>
+
+<div id="analysis-overlay" class="overlay hidden">
+  <canvas id="neural-canvas"></canvas>
+  <p class="analysis-label"><span data-i18n="analysis.loading">Analyse IA en cours</span><span class="dots"><span>.</span><span>.</span><span>.</span></span></p>
+</div>
+
+<div id="result-overlay" class="overlay result hidden">
+  <div class="iris-wipe" id="iris-wipe" aria-hidden="true"></div>
+  <div class="light-burst" id="light-burst" aria-hidden="true"></div>
+  <div class="result-content">
+    <div class="result-icon" id="result-icon"></div>
+    <p class="result-eyebrow" id="result-source"></p>
+    <p class="result-product">
+      <span data-i18n="result.productLabel">Produit analysé</span>
+      <strong id="result-product-name"></strong>
+    </p>
+    <h2 id="result-title"></h2>
+    <p id="result-sub" data-i18n="result.sub">Jetez cet article dans la poubelle indiquée.</p>
+    <div class="result-actions">
+      <button id="reset-btn" class="magnetic" data-i18n="result.newSearch">Nouvelle recherche</button>
+      <a href="#categories" id="see-categories-btn" class="magnetic ghost-btn" data-i18n="result.seeGuides">Voir toutes les consignes</a>
+    </div>
+  </div>
+</div>
+
+<div id="history-strip" class="history-strip hidden" aria-label="Historique de tri" data-i18n-aria-label="history.label">
+  <span class="history-label" data-i18n="history.label">Historique</span>
+  <button type="button" class="history-scroll-btn" id="history-scroll-prev" aria-label="Voir les tris précédents" data-i18n-aria-label="history.previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div id="history-items" class="history-items" tabindex="0" aria-label="Derniers tris" data-i18n-aria-label="history.items"></div>
+  <button type="button" class="history-scroll-btn" id="history-scroll-next" aria-label="Voir les tris suivants" data-i18n-aria-label="history.next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+  <button type="button" class="history-more-btn" id="history-more" aria-haspopup="dialog" aria-controls="history-panel">
+    <span data-i18n="history.more">Tout voir</span>
+  </button>
+</div>
+
+<div id="history-panel" class="history-panel hidden" role="dialog" aria-modal="true" aria-labelledby="history-panel-title">
+  <button type="button" class="history-panel-backdrop" id="history-panel-backdrop" aria-label="Fermer l'historique" data-i18n-aria-label="history.close"></button>
+  <div class="history-panel-card">
+    <div class="history-panel-head">
+      <div>
+        <p class="eyebrow" data-i18n="history.recent">Vos derniers tris</p>
+        <h2 id="history-panel-title" data-i18n="history.title">Historique complet</h2>
+      </div>
+      <button type="button" class="history-close-btn" id="history-close" aria-label="Fermer" data-i18n-aria-label="history.closeShort">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div id="history-panel-items" class="history-panel-items"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-product">
+    <div class="footer-brand"><span>EcoSort</span><strong>-Search</strong></div>
+    <p class="footer-tagline" data-i18n="footer.tagline">Le bon geste de tri, au bon moment.</p>
+  </div>
+  <div class="footer-legend">
+    <span class="legend-chip" style="--c:#FFD400;" data-i18n="colors.yellow">Jaune</span>
+    <span class="legend-chip" style="--c:#00E676;" data-i18n="colors.green">Verte</span>
+    <span class="legend-chip" style="--c:#00AEEF;" data-i18n="colors.blue">Bleue</span>
+    <span class="legend-chip" style="--c:#00F0FF;">D3E</span>
+    <span class="legend-chip" style="--c:#D97757;" data-i18n="colors.brown">Marron</span>
+  </div>
+  <nav class="footer-links" aria-label="Navigation secondaire" data-i18n-aria-label="footer.navigation">
+    <a href="#search-form" data-i18n="footer.search">Nouvelle recherche</a>
+    <a href="#categories" data-i18n="footer.guide">Guide de tri</a>
+    <a href="#pipeline" data-i18n="footer.how">Fonctionnement</a>
+    <a class="footer-github" href="https://github.com/Dragnir2912/Ecosort-search/" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2.23c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.57-.29-5.27-1.28-5.27-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.47.11-3.05 0 0 .97-.31 3.16 1.18A10.96 10.96 0 0 1 12 6.12c.98 0 1.95.13 2.86.38 2.2-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.71 5.38-5.29 5.67.42.36.79 1.06.79 2.14v3.28c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .7Z"/></svg>
+      <span data-i18n="footer.github">Code source sur GitHub</span>
+    </a>
+  </nav>
+  <p class="footer-note" data-i18n="footer.note">Les consignes peuvent varier selon votre commune. Vérifiez les règles locales en cas de doute.</p>
+  <p class="footer-copyright" data-i18n="footer.copyright">© 2026 EcoSort-Search. Tous droits réservés.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="/static/js/waste-data.js"></script>
+<script src="/static/js/i18n.js"></script>
+<script src="/static/js/waste-showroom.js"></script>
+<script src="/static/js/hero-particles-bg.js"></script>
+<script src="/static/js/scroll-fx.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
